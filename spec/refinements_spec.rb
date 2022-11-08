@@ -1,64 +1,6 @@
 describe RSpec::Protobuf::Refinements do
   using described_class
 
-  describe "#normalized_hash?" do
-    it "discards default values" do
-      expect(MyMessage.new.normalized_hash).to eq({})
-    end
-
-    it "discards values that match defaults" do
-      expect(MyMessage.new(msg: "").normalized_hash).to eq({})
-    end
-
-    it "returns non-default attributes" do
-      expect(MyMessage.new(msg: "hi").normalized_hash).to eq(msg: "hi")
-    end
-
-    it "can stringify keys" do
-      expect(
-        MyMessage.new(msg: "hi").normalized_hash(symbolize_keys: false)
-      ).to eq("msg" => "hi")
-    end
-
-    context "with ComplexMessage" do
-      it "discards default values" do
-        expect(ComplexMessage.new.normalized_hash).to eq({})
-      end
-
-      it "returns only non-default attributes" do
-        msg = ComplexMessage.new(
-          msg: MyMessage.new(msg: "woof"),
-          uid: 123,
-          date: DateMessage.new(month: 10, day: 17),
-        )
-
-        expect(msg.normalized_hash).to eq(
-          msg: { msg: "woof" },
-          uid: 123,
-          date: { month: 10, day: 17 },
-        )
-      end
-
-      it "returns empty hashes for all-default sub-messages" do
-        msg = ComplexMessage.new(msg: MyMessage.new)
-
-        expect(msg.normalized_hash).to eq(msg: {})
-      end
-
-      it "handles enums properly" do
-        msg = ComplexMessage.new(
-          date: DateMessage.new(type: :DATE_BDAY),
-        )
-
-        expect(msg.normalized_hash).to eq(date: { type: :DATE_BDAY })
-
-        expect(msg.normalized_hash(symbolize_keys: false)).to eq(
-          "date" => { "type" => :DATE_BDAY },
-        )
-      end
-    end
-  end
-
   describe "#include?" do
     # redefine matcher in this scope so Refinement can be accessed
     matcher :include_attrs do |attrs|
@@ -88,6 +30,7 @@ describe RSpec::Protobuf::Refinements do
     it { is_expected.to include_attrs(msg: nil) }
     it { is_expected.to include_attrs(uid: 123) }
     it { is_expected.to include_attrs(uid: Integer) }
+    it { is_expected.to include_attrs(uid: 0..200) }
 
     it { is_expected.to include_attrs(date: date) }
     it { is_expected.to include_attrs(date: hash_including(date)) }
