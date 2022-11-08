@@ -3,11 +3,17 @@ rspec-protobuf
 ![Gem](https://img.shields.io/gem/dt/rspec-protobuf?style=plastic)
 [![codecov](https://codecov.io/gh/dpep/rspec-protobuf/branch/main/graph/badge.svg)](https://codecov.io/gh/dpep/rspec-protobuf)
 
-...
+RSpec matchers for Protobuf.
 
 
 ```ruby
 require "rspec/protobuf"
+
+subject { MyProtoMessage.new(msg: "hi") }
+
+it { is_expected.to be_a_protobuf }
+it { is_expected.to be_a_protobuf(msg: "hi") }
+it { is_expected.to be_a_protobuf(msg: /^h/) }
 ```
 
 

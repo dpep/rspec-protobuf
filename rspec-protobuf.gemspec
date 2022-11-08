@@ -9,8 +9,8 @@ Gem::Specification.new do |s|
   s.version     = package.const_get "VERSION"
   s.authors     = ["Daniel Pepper"]
   s.summary     = package.to_s
-  s.description = "..."
-  s.homepage    = "https://github.com/dpep/#{package_name}_rb"
+  s.description = "RSpec matchers for Protobuf"
+  s.homepage    = "https://github.com/dpep/#{package_name}"
   s.license     = "MIT"
   s.files       = `git ls-files * ':!:spec'`.split("\n")
 
