@@ -1,13 +1,13 @@
-MY_NEW_GEM
+rspec-protobuf
 ======
-![Gem](https://img.shields.io/gem/dt/MY_NEW_GEM?style=plastic)
-[![codecov](https://codecov.io/gh/dpep/MY_NEW_GEM_rb/branch/main/graph/badge.svg)](https://codecov.io/gh/dpep/MY_NEW_GEM_rb)
+![Gem](https://img.shields.io/gem/dt/rspec-protobuf?style=plastic)
+[![codecov](https://codecov.io/gh/dpep/rspec-protobuf/branch/main/graph/badge.svg)](https://codecov.io/gh/dpep/rspec-protobuf)
 
 ...
 
 
 ```ruby
-require "MY_NEW_GEM"
+require "rspec-protobuf"
 ```
 
 

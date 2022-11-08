@@ -1,3 +1,3 @@
-module MY_NEW_GEM
+module rspec-protobuf
   VERSION = "0.0.0"
 end
