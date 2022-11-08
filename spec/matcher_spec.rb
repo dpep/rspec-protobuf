@@ -49,4 +49,21 @@ describe :be_a_protobuf do
       }.to raise_error(ArgumentError)
     end
   end
+
+  context "with a more complex proto" do
+    subject(:msg) do
+      ComplexMessage.new(
+        # msg: MyMessage.new,
+        uid: 123,
+        date: DateMessage.new(month: 1, day: 3),
+      )
+    end
+
+    it { is_expected.to be_a_protobuf(msg: nil) }
+    it { is_expected.to be_a_protobuf(uid: 0..200) }
+    it { is_expected.to be_a_protobuf(date: { month: 1, day: 3 }) }
+    it { is_expected.not_to be_a_protobuf(date: { month: 1 }) }
+    it { is_expected.to be_a_protobuf(date: include(month: 1)) }
+    it { is_expected.to be_a_protobuf(date: include(type: :DATE_DEFAULT)) }
+  end
 end

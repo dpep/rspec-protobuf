@@ -12,6 +12,7 @@ RSpec::Matchers.define :be_a_protobuf do |type = nil, **attrs|
       raise TypeError, "Expected areg to be a Google::Protobuf::MessageExts, found: #{type}"
     end
 
+    @fail_msg = "#{actual} is not a Protobuf"
     return false unless actual.is_a?(Google::Protobuf::MessageExts)
 
     # match expected message type
@@ -29,6 +30,7 @@ RSpec::Matchers.define :be_a_protobuf do |type = nil, **attrs|
       end
     end
 
+    @fail_msg = nil
     actual.include?(attrs)
   end
 
@@ -36,7 +38,9 @@ RSpec::Matchers.define :be_a_protobuf do |type = nil, **attrs|
     type ? "a #{type} Protobuf message" : "a Protobuf message"
   end
 
-  failure_message { @fail_msg }
+  failure_message { @fail_msg or super() }
+
+  diffable
 end
 
 RSpec::Matchers.alias_matcher :a_protobuf, :be_a_protobuf
