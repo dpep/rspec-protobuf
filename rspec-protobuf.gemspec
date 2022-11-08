@@ -1,7 +1,7 @@
 package_name = File.basename(__FILE__).split(".")[0]
 load Dir.glob("lib/**/version.rb")[0]
 
-package = rspec-protobuf
+package = RSpec::Protobuf
 
 
 Gem::Specification.new do |s|
@@ -14,8 +14,10 @@ Gem::Specification.new do |s|
   s.license     = "MIT"
   s.files       = `git ls-files * ':!:spec'`.split("\n")
 
+  s.add_dependency "google-protobuf", ">= 3"
+  s.add_dependency "rspec", ">= 3"
+
   s.add_development_dependency "byebug"
   s.add_development_dependency "codecov"
-  s.add_development_dependency "rspec"
   s.add_development_dependency "simplecov"
 end

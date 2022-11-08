@@ -7,7 +7,7 @@ rspec-protobuf
 
 
 ```ruby
-require "rspec-protobuf"
+require "rspec/protobuf"
 ```
 
 
