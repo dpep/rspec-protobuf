@@ -45,6 +45,23 @@ module RSpec
             end
           end
         end
+
+        def normalized_hash
+          res = {}
+
+          self.class.descriptor.each do |field|
+            value = field.get(self)
+
+            if value.is_a?(Google::Protobuf::MessageExts)
+              # recursively serialize sub-message
+              value = value.normalized_hash
+            end
+
+            res[field.name.to_sym] = value unless field.default == value
+          end
+
+          res
+        end
       end
     end
   end

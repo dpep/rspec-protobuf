@@ -34,6 +34,15 @@ describe :be_a_protobuf do
     it { is_expected.not_to be_a_protobuf(DateMessage) }
     it { expect(Object).not_to be_a_protobuf }
     it { expect(123).not_to be_a_protobuf }
+
+    it "produces a failure diff" do
+      expect {
+        is_expected.to be_a_protobuf(msg: "H")
+      }.to fail_including(
+        '-:msg => "H",',
+        '+:msg => "Hello",'
+      )
+    end
   end
 
   context "when input is erroneous" do
@@ -65,5 +74,19 @@ describe :be_a_protobuf do
     it { is_expected.not_to be_a_protobuf(date: { month: 1 }) }
     it { is_expected.to be_a_protobuf(date: include(month: 1)) }
     it { is_expected.to be_a_protobuf(date: include(type: :DATE_DEFAULT)) }
+
+    it "produces a failure diff" do
+      expect {
+        is_expected.to be_a_protobuf(msg: "H", uid: 1, date: { month: 1 })
+      }.to fail_including(
+        '-:msg => "H",',
+
+        '-:uid => 1,',
+        '+:uid => 123,',
+
+        '-:date => {:month=>1},',
+        '+:date => {:day=>3, :month=>1},',
+      )
+    end
   end
 end

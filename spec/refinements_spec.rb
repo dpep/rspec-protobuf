@@ -94,4 +94,52 @@ describe RSpec::Protobuf::Refinements do
       is_expected.not_to match_attrs(:foo)
     end
   end
+
+  describe "#normalized_hash" do
+    it "discards default values" do
+      expect(MyMessage.new.normalized_hash).to eq({})
+    end
+
+    it "discards values that match defaults" do
+      expect(MyMessage.new(msg: "").normalized_hash).to eq({})
+    end
+
+    it "returns non-default attributes" do
+      expect(MyMessage.new(msg: "hi").normalized_hash).to eq(msg: "hi")
+    end
+
+    context "with ComplexMessage" do
+      it "discards default values" do
+        expect(ComplexMessage.new.normalized_hash).to eq({})
+      end
+
+      it "returns only non-default attributes" do
+        msg = ComplexMessage.new(
+          msg: MyMessage.new(msg: "woof"),
+          uid: 123,
+          date: DateMessage.new(month: 10, day: 17),
+        )
+
+        expect(msg.normalized_hash).to eq(
+          msg: { msg: "woof" },
+          uid: 123,
+          date: { month: 10, day: 17 },
+        )
+      end
+
+      it "returns empty hashes for all-default sub-messages" do
+        msg = ComplexMessage.new(msg: MyMessage.new)
+
+        expect(msg.normalized_hash).to eq(msg: {})
+      end
+
+      it "handles enums properly" do
+        msg = ComplexMessage.new(
+          date: DateMessage.new(type: :DATE_BDAY),
+        )
+
+        expect(msg.normalized_hash).to eq(date: { type: :DATE_BDAY })
+      end
+    end
+  end
 end
