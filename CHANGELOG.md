@@ -1,3 +1,6 @@
+###  v0.2.1  (2022-11-16)
+- fix enum matching
+
 ###  v0.2.0  (2022-11-09)
 - rspec differ
 - failure message and test coverage
