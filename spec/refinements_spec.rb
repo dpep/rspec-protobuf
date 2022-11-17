@@ -51,6 +51,13 @@ describe RSpec::Protobuf::Refinements do
       msg = ComplexMessage.new(msg: MyMessage.new(msg: "Hi"))
       expect(msg).to include_attrs(msg: { msg: /^H/ })
     end
+
+    context "with enums" do
+      subject { DateMessage.new(type: DateType::DATE_BDAY) }
+
+      it { is_expected.to include_attrs(type: :DATE_BDAY) }
+      it { is_expected.to include_attrs(type: DateType::DATE_BDAY) }
+    end
   end
 
   describe "#match?" do
@@ -93,6 +100,13 @@ describe RSpec::Protobuf::Refinements do
     it "does not match bogus attributes" do
       is_expected.not_to match_attrs(:foo)
     end
+
+    context "with enums" do
+      subject { DateMessage.new(type: DateType::DATE_BDAY) }
+
+      it { is_expected.to match_attrs(type: :DATE_BDAY) }
+      it { is_expected.to match_attrs(type: DateType::DATE_BDAY) }
+    end
   end
 
   describe "#normalized_hash" do
@@ -106,6 +120,14 @@ describe RSpec::Protobuf::Refinements do
 
     it "returns non-default attributes" do
       expect(MyMessage.new(msg: "hi").normalized_hash).to eq(msg: "hi")
+    end
+
+    it "symbolizes enums" do
+      msg = DateMessage.new(type: :DATE_BDAY)
+      expect(msg.normalized_hash).to eq(type: :DATE_BDAY)
+
+      msg = DateMessage.new(type: DateType::DATE_BDAY)
+      expect(msg.normalized_hash).to eq(type: :DATE_BDAY)
     end
 
     context "with ComplexMessage" do
@@ -133,7 +155,7 @@ describe RSpec::Protobuf::Refinements do
         expect(msg.normalized_hash).to eq(msg: {})
       end
 
-      it "handles enums properly" do
+      it "symbolizes enums" do
         msg = ComplexMessage.new(
           date: DateMessage.new(type: :DATE_BDAY),
         )

@@ -11,9 +11,18 @@ module RSpec
           # ensure all enumerated attributes are present
           return false unless expected_attrs.keys.all? { |attr| respond_to?(attr) }
 
+          fields = {}
+          self.class.descriptor.each { |f| fields[f.name.to_sym] = f }
+
           # check expected attribute matches
           expected_attrs.all? do |expected_attr, expected_value|
-            actual_value = send(expected_attr)
+            field = fields[expected_attr]
+            actual_value = field.get(self)
+
+            # convert enum to int value to match input type
+            if field.type == :enum && expected_value.is_a?(Integer)
+              actual_value = field.subtype.lookup_name(actual_value)
+            end
 
             matches = expected_value === actual_value
 
@@ -41,7 +50,15 @@ module RSpec
             if actual_value.is_a?(Google::Protobuf::MessageExts) && expected_value.is_a?(Hash)
               actual_value.match?(**expected_value)
             else
-              attrs.fetch(field.name.to_sym, field.default) === actual_value
+              # fall back to default value
+              expected_value = field.default unless attrs.key?(field.name.to_sym)
+
+              # convert enum to int value to match input type
+              if field.type == :enum && expected_value.is_a?(Integer)
+                actual_value = field.subtype.lookup_name(actual_value)
+              end
+
+              expected_value === actual_value
             end
           end
         end
