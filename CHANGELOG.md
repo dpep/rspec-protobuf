@@ -1,3 +1,7 @@
+###  v0.2.2  (2022-12-15)
+- dependabot and lockfile
+- simplify dependencies
+
 ###  v0.2.1  (2022-11-16)
 - fix enum matching
 
