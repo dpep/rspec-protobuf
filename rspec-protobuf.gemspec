@@ -15,9 +15,10 @@ Gem::Specification.new do |s|
   s.files       = `git ls-files * ':!:spec'`.split("\n")
 
   s.add_dependency "google-protobuf", ">= 3"
-  s.add_dependency "rspec", ">= 3"
+  s.add_dependency "rspec-expectations", ">= 3"
 
   s.add_development_dependency "byebug"
   s.add_development_dependency "codecov"
+  s.add_development_dependency "rspec", ">= 3"
   s.add_development_dependency "simplecov"
 end

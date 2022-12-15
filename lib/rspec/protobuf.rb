@@ -1,5 +1,5 @@
 require "google/protobuf"
-require "rspec"
+require "rspec/expectations"
 require "rspec/protobuf/refinements"
 require "rspec/protobuf/version"
 
