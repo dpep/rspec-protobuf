@@ -20,7 +20,7 @@ describe RSpec::Protobuf::Refinements do
     it { is_expected.to include_attrs(:uid, :date) }
 
     it "includes nil attributes" do
-      is_expected.to include_attrs(:msg, :complex)
+      is_expected.to include_attrs(:msg, :complex, :uuid, :numbers)
     end
 
     it "does not include bogus attributes" do
@@ -58,6 +58,10 @@ describe RSpec::Protobuf::Refinements do
       it { is_expected.to include_attrs(type: :DATE_BDAY) }
       it { is_expected.to include_attrs(type: DateType::DATE_BDAY) }
     end
+
+    it "matches default value for repeated fields" do
+      is_expected.to include_attrs(numbers: [])
+    end
   end
 
   describe "#match?" do
@@ -90,6 +94,7 @@ describe RSpec::Protobuf::Refinements do
         msg: nil,
         uid: 123,
         date: date.merge(type: :DATE_DEFAULT),
+        numbers: [],
       )
     end
 
@@ -135,17 +140,28 @@ describe RSpec::Protobuf::Refinements do
         expect(ComplexMessage.new.normalized_hash).to eq({})
       end
 
+      it "discards values that equal defaults" do
+        msg = ComplexMessage.new(
+          msg: nil,
+          complex: false,
+          numbers: [],
+        )
+        expect(msg.normalized_hash).to eq({})
+      end
+
       it "returns only non-default attributes" do
         msg = ComplexMessage.new(
           msg: MyMessage.new(msg: "woof"),
           uid: 123,
           date: DateMessage.new(month: 10, day: 17),
+          numbers: [ 1, 2, 3 ],
         )
 
         expect(msg.normalized_hash).to eq(
           msg: { msg: "woof" },
           uid: 123,
           date: { month: 10, day: 17 },
+          numbers: [ 1, 2, 3 ],
         )
       end
 

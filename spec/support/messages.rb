@@ -26,6 +26,8 @@ pool.build do
       optional :uid, :int32, 4
       optional :uuid, :string, 5
     end
+
+    repeated :numbers, :int32, 6
   end
 end
 

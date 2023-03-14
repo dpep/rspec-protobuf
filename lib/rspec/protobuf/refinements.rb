@@ -50,8 +50,10 @@ module RSpec
             if actual_value.is_a?(Google::Protobuf::MessageExts) && expected_value.is_a?(Hash)
               actual_value.match?(**expected_value)
             else
-              # fall back to default value
-              expected_value = field.default unless attrs.key?(field.name.to_sym)
+              unless attrs.key?(field.name.to_sym)
+                # fall back to default value
+                expected_value = field.label == :repeated ? [] : field.default
+              end
 
               # convert enum to int value to match input type
               if field.type == :enum && expected_value.is_a?(Integer)
@@ -74,7 +76,8 @@ module RSpec
               value = value.normalized_hash
             end
 
-            res[field.name.to_sym] = value unless field.default == value
+            default = field.label == :repeated ? [] : field.default
+            res[field.name.to_sym] = value unless default == value
           end
 
           res
