@@ -1,3 +1,6 @@
+###  v0.2.3  (2023-03-14)
+- repeated fields
+
 ###  v0.2.2  (2022-12-15)
 - dependabot and lockfile
 - simplify dependencies

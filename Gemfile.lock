@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    rspec-protobuf (0.2.2)
+    rspec-protobuf (0.2.3)
       google-protobuf (>= 3)
       rspec-expectations (>= 3)
 
@@ -13,7 +13,7 @@ GEM
       simplecov (>= 0.15, < 0.22)
     diff-lcs (1.5.0)
     docile (1.4.0)
-    google-protobuf (3.21.12)
+    google-protobuf (3.22.2)
     rspec (3.12.0)
       rspec-core (~> 3.12.0)
       rspec-expectations (~> 3.12.0)
