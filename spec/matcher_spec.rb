@@ -89,4 +89,20 @@ describe :be_a_protobuf do
       )
     end
   end
+
+  context "with a repeated field" do
+    subject(:msg) { ComplexMessage.new(numbers: numbers) }
+    let(:numbers) { [ 1, 2, 3 ] }
+
+    it { is_expected.to be_a_protobuf(numbers: numbers) }
+
+    it "produces a failure diff" do
+      expect {
+        is_expected.to be_a_protobuf(numbers: [])
+      }.to fail_including(
+        '-:numbers => [],',
+        '+:numbers => [1, 2, 3],',
+      )
+    end
+  end
 end

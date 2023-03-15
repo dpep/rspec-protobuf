@@ -34,7 +34,9 @@ RSpec::Matchers.define :be_a_protobuf do |type = nil, **attrs|
 
     # customize differ output by removing unreferenced and default attrs
     @actual = actual.normalized_hash.slice(*attrs.keys).reject do |k, v|
-      v == actual.class.descriptor.lookup(k.to_s).default
+      field = actual.class.descriptor.lookup(k.to_s)
+      default = field.label == :repeated ? [] : field.default
+      v == default
     end
 
     actual.include?(attrs)
