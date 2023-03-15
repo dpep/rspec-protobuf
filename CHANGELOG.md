@@ -1,3 +1,6 @@
+###  v0.2.4  (2023-03-15)
+- repeated field bug
+
 ###  v0.2.3  (2023-03-14)
 - repeated fields
 

@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    rspec-protobuf (0.2.3)
+    rspec-protobuf (0.2.4)
       google-protobuf (>= 3)
       rspec-expectations (>= 3)
 
