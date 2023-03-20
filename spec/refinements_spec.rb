@@ -47,9 +47,16 @@ describe RSpec::Protobuf::Refinements do
       it { is_expected.to include_attrs(date: include(day: anything)) }
     end
 
-    it "supports regex matching" do
-      msg = ComplexMessage.new(msg: MyMessage.new(msg: "Hi"))
-      expect(msg).to include_attrs(msg: { msg: /^H/ })
+    context "with a string attribute" do
+      subject { ComplexMessage.new(msg: MyMessage.new(msg: "Hello")) }
+
+      it "matches a regex" do
+        is_expected.to include_attrs(msg: { msg: /^H/ })
+      end
+
+      it "matches a symbol" do
+        is_expected.to include_attrs(msg: { msg: :Hello })
+      end
     end
 
     context "with enums" do
@@ -98,8 +105,16 @@ describe RSpec::Protobuf::Refinements do
       )
     end
 
-    it "supports regex matching" do
-      expect(MyMessage.new(msg: "Hi")).to match_attrs(msg: /^H/)
+    context "with a string attribute" do
+      subject { ComplexMessage.new(msg: MyMessage.new(msg: "Hello")) }
+
+      it "matches a regex" do
+        is_expected.to match_attrs(msg: { msg: /^H/ })
+      end
+
+      it "matches a symbol" do
+        is_expected.to match_attrs(msg: { msg: :Hello })
+      end
     end
 
     it "does not match bogus attributes" do

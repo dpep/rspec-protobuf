@@ -9,6 +9,10 @@ describe :be_a_protobuf do
   it { is_expected.to be_a_protobuf(msg: anything) }
   it { is_expected.to be_a_protobuf(msg: include("ll")) }
 
+  it "treats strings and symbols as equivalent" do
+    is_expected.to be_a_protobuf(msg: :Hello)
+  end
+
   describe "composite matching" do
     context "within a hash" do
       subject { { a: 1, b: msg } }
@@ -102,6 +106,21 @@ describe :be_a_protobuf do
       }.to fail_including(
         '-:numbers => [],',
         '+:numbers => [1, 2, 3],',
+      )
+    end
+  end
+
+  context "when expecting a symbol" do
+    subject { ComplexMessage.new(msg: MyMessage.new(msg: "hello")) }
+
+    it { is_expected.to be_a_protobuf(msg: { msg: :hello }) }
+
+    it "produces a failure diff that preserves the types" do
+      expect {
+        is_expected.to be_a_protobuf(msg: { msg: :h })
+      }.to fail_including(
+        '-:msg => {:msg=>:h},',
+        '+:msg => {:msg=>"hello"},',
       )
     end
   end

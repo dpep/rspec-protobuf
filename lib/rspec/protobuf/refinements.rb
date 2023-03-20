@@ -19,6 +19,11 @@ module RSpec
             field = fields[expected_attr]
             actual_value = field.get(self)
 
+            # convert symbols to strings
+            if field.type == :string && expected_value.is_a?(Symbol)
+              expected_value = expected_value.to_s
+            end
+
             # convert enum to int value to match input type
             if field.type == :enum && expected_value.is_a?(Integer)
               actual_value = field.subtype.lookup_name(actual_value)
@@ -53,6 +58,11 @@ module RSpec
               unless attrs.key?(field.name.to_sym)
                 # fall back to default value
                 expected_value = field.label == :repeated ? [] : field.default
+              end
+
+              # convert symbols to strings
+              if field.type == :string && expected_value.is_a?(Symbol)
+                expected_value = expected_value.to_s
               end
 
               # convert enum to int value to match input type
