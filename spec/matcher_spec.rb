@@ -64,7 +64,7 @@ describe :be_a_protobuf do
   end
 
   context "with a more complex proto" do
-    subject(:msg) do
+    subject do
       ComplexMessage.new(
         # msg: MyMessage.new,
         uid: 123,
@@ -95,7 +95,7 @@ describe :be_a_protobuf do
   end
 
   context "with a repeated field" do
-    subject(:msg) { ComplexMessage.new(numbers: numbers) }
+    subject { ComplexMessage.new(numbers: numbers) }
     let(:numbers) { [ 1, 2, 3 ] }
 
     it { is_expected.to be_a_protobuf(numbers: numbers) }
