@@ -47,8 +47,12 @@ describe RSpec::Protobuf::Refinements do
       it { is_expected.to include_attrs(date: include(day: anything)) }
     end
 
-    context "with a string attribute" do
+    context "with a submessage" do
       subject { ComplexMessage.new(msg: MyMessage.new(msg: "Hello")) }
+
+      it "matches a protobuf" do
+        is_expected.to include_attrs(msg: MyMessage.new(msg: "Hello"))
+      end
 
       it "matches a regex" do
         is_expected.to include_attrs(msg: { msg: /^H/ })
@@ -105,8 +109,12 @@ describe RSpec::Protobuf::Refinements do
       )
     end
 
-    context "with a string attribute" do
+    context "with a submessage" do
       subject { ComplexMessage.new(msg: MyMessage.new(msg: "Hello")) }
+
+      it "matches a protobuf" do
+        is_expected.to match_attrs(msg: MyMessage.new(msg: "Hello"))
+      end
 
       it "matches a regex" do
         is_expected.to match_attrs(msg: { msg: /^H/ })
