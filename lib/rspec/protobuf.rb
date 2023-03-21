@@ -8,7 +8,7 @@ using RSpec::Protobuf::Refinements
 RSpec::Matchers.define :be_a_protobuf do |type = nil, **attrs|
   match do |actual|
     # ensure type is a valid Protobuf message type
-    if type && !(type < Google::Protobuf::MessageExts)
+    if type && !(type.is_a?(Class) && type < Google::Protobuf::MessageExts)
       raise TypeError, "Expected arg to be a Google::Protobuf::MessageExts, found: #{type}"
     end
 

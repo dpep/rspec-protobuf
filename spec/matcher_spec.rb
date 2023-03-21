@@ -50,6 +50,12 @@ describe :be_a_protobuf do
   end
 
   context "when input is erroneous" do
+    it "catches protobuf instance instead of type" do
+      expect {
+        is_expected.not_to be_a_protobuf(msg)
+      }.to raise_error(TypeError)
+    end
+
     it "catches non-protobuf types" do
       expect {
         is_expected.not_to be_a_protobuf(Object)
