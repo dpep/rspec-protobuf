@@ -20,7 +20,7 @@ module RSpec
           end
         end
 
-        def match?(**attrs)
+        def matches?(**attrs)
           # ensure all enumerated attributes are present
           return false unless attrs.keys.all? { |attr| respond_to?(attr) }
 
@@ -75,7 +75,7 @@ module RSpec
             when Google::Protobuf::MessageExts
               expected === actual
             when Hash
-              actual.match?(**expected)
+              actual.matches?(**expected)
             else
               # eg. RSpec matchers
               expected === actual.to_h

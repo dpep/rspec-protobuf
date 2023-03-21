@@ -75,9 +75,9 @@ describe RSpec::Protobuf::Refinements do
     end
   end
 
-  describe "#match?" do
+  describe "#matches?" do
     matcher :match_attrs do |**attrs|
-      match { |msg| msg.match?(**attrs) }
+      match { |msg| msg.matches?(**attrs) }
     end
 
     subject do
