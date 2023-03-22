@@ -11,8 +11,9 @@ module RSpec
           # ensure all enumerated attributes are present
           return false unless expected_attrs.keys.all? { |attr| respond_to?(attr) }
 
-          fields = {}
-          self.class.descriptor.each { |f| fields[f.name.to_sym] = f }
+          fields = Hash[
+            self.class.descriptor.map { |f| [ f.name.to_sym, f ] }
+          ]
 
           # ensure that expected attribute matches
           expected_attrs.all? do |expected_attr, expected_value|
@@ -26,14 +27,7 @@ module RSpec
 
           # ensure that each field matches
           self.class.descriptor.all? do |field|
-            expected = if attrs.key?(field.name.to_sym)
-              attrs[field.name.to_sym]
-            else
-              # use default value
-              field.label == :repeated ? [] : field.default
-            end
-
-            field_matches?(field, expected)
+            field_matches?(field, attrs[field.name.to_sym])
           end
         end
 
@@ -60,8 +54,11 @@ module RSpec
         def field_matches?(field, expected)
           actual = field.get(self)
 
-          # convert symbols to strings
-          if field.type == :string && expected.is_a?(Symbol)
+          if expected.nil?
+            # mimic protobuf behavior and convert to default value
+            expected = field.label == :repeated ? [] : field.default
+          elsif expected.is_a?(Symbol) && field.type == :string
+            # convert symbols to strings
             expected = expected.to_s
           end
 

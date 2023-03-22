@@ -130,4 +130,30 @@ describe :be_a_protobuf do
       )
     end
   end
+
+  describe "default values" do
+    subject(:msg) do
+      ComplexMessage.new(msg: nil, uid: nil, uuid: nil, numbers: nil)
+    end
+
+    it "implicitly converts nil into type-specific default values" do
+      is_expected.to eq ComplexMessage.new
+    end
+
+    it { expect(msg.msg).to be nil }
+    it { expect(msg.uid).to be 0 }
+    it { expect(msg.uuid).to eq "" }
+    it { expect(msg.numbers).to eq [] }
+
+    it { is_expected.to be_a_protobuf(msg: nil) }
+
+    it { is_expected.to be_a_protobuf(uid: 0) }
+    it { is_expected.to be_a_protobuf(uid: nil) }
+
+    it { is_expected.to be_a_protobuf(uuid: "") }
+    it { is_expected.to be_a_protobuf(uuid: nil) }
+
+    it { is_expected.to be_a_protobuf(numbers: []) }
+    it { is_expected.to be_a_protobuf(numbers: nil) }
+  end
 end
