@@ -63,6 +63,14 @@ describe RSpec::Protobuf::Refinements do
       end
     end
 
+    context "with an empty submessage" do
+      subject { ComplexMessage.new(msg: MyMessage.new) }
+
+      it { is_expected.to include_attrs(msg: {}) }
+      it { is_expected.to include_attrs(msg: { msg: "" }) }
+      it { is_expected.not_to include_attrs(msg: nil) }
+    end
+
     context "with enums" do
       subject { DateMessage.new(type: DateType::DATE_BDAY) }
 
