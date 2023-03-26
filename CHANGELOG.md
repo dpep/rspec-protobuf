@@ -1,3 +1,11 @@
+###  v0.3.0  (2023-03-25)
+- match repeated field
+- match default values
+- test coverage
+- type check
+- simplify
+- symbol matching
+
 ###  v0.2.4  (2023-03-15)
 - repeated field bug
 
