@@ -67,18 +67,30 @@ module RSpec
             actual = field.subtype.lookup_name(actual)
           end
 
+          if field.label == :repeated && expected.is_a?(Array)
+            return false unless actual.length == expected.length
+
+            actual.zip(expected).all? do |a_actual, a_expected|
+              values_match?(a_actual, a_expected)
+            end
+          else
+            values_match?(actual, expected)
+          end
+        end
+
+        def values_match?(actual, expected)
           if actual.is_a?(Google::Protobuf::MessageExts)
             case expected
             when Google::Protobuf::MessageExts
               expected === actual
             when Hash
+              # recurse
               actual.matches?(**expected)
             else
               # eg. RSpec matchers
               expected === actual.to_h
             end
           else
-            # compare scalar attribute
             expected === actual
           end
         end

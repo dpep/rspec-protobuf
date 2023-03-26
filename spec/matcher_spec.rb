@@ -100,7 +100,7 @@ describe :be_a_protobuf do
     end
   end
 
-  context "with a repeated field" do
+  context "with a repeated field of scalars" do
     subject { ComplexMessage.new(numbers: numbers) }
     let(:numbers) { [ 1, 2, 3 ] }
 
@@ -112,6 +112,57 @@ describe :be_a_protobuf do
       }.to fail_including(
         '-:numbers => [],',
         '+:numbers => [1, 2, 3],',
+      )
+    end
+  end
+
+  context "with a repeated field of protobufs" do
+    subject(:msg) { ComplexMessage.new(messages: messages) }
+    let(:messages) do
+      [
+        MyMessage.new(msg: "a"),
+        MyMessage.new(msg: "b"),
+        MyMessage.new(msg: "c"),
+      ]
+    end
+
+
+    it { is_expected.to be_a_protobuf(**msg.to_h) }
+    it { is_expected.to be_a_protobuf(messages: messages) }
+
+    it "matches normalized protobufs" do
+      is_expected.to be_a_protobuf(
+        messages: [
+          { msg: "a" },
+          { msg: "b" },
+          { msg: "c" },
+        ],
+      )
+    end
+
+    it "matches mixed input" do
+      is_expected.to be_a_protobuf(
+        messages: [
+          MyMessage.new(msg: "a"),
+          { msg: "b" },
+          include(msg: /^c/),
+        ],
+      )
+    end
+
+    it "catches length mismatches" do
+      is_expected.not_to be_a_protobuf(messages: messages[...2])
+
+      expect(
+        ComplexMessage.new(messages: messages[...2])
+      ).not_to be_a_protobuf(**msg.to_h)
+    end
+
+    it "produces a failure diff" do
+      expect {
+        is_expected.to be_a_protobuf(messages: messages[...2])
+      }.to fail_with(
+        /\+:messages => \[<MyMessage: msg: "a">, .* "c">\],/,
       )
     end
   end

@@ -28,6 +28,7 @@ pool.build do
     end
 
     repeated :numbers, :int32, 6
+    repeated :messages, :message, 7, "MyMessage"
   end
 end
 
