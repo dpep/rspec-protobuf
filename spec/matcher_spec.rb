@@ -85,6 +85,12 @@ describe :be_a_protobuf do
     it { is_expected.to be_a_protobuf(date: include(month: 1)) }
     it { is_expected.to be_a_protobuf(date: include(type: :DATE_DEFAULT)) }
 
+    it "matches nested protobuf matchers" do
+      is_expected.to be_a_protobuf(
+        date: a_protobuf(month: 1),
+      )
+    end
+
     it "produces a failure diff" do
       expect {
         is_expected.to be_a_protobuf(msg: "H", uid: 1, date: { month: 1 })

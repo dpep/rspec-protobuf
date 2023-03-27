@@ -79,10 +79,10 @@ module RSpec
         end
 
         def values_match?(actual, expected)
-          if actual.is_a?(Google::Protobuf::MessageExts)
+          expected === actual || if actual.is_a?(Google::Protobuf::MessageExts)
             case expected
             when Google::Protobuf::MessageExts
-              expected === actual
+              # expected === actual
             when Hash
               # recurse
               actual.matches?(**expected)
@@ -90,8 +90,6 @@ module RSpec
               # eg. RSpec matchers
               expected === actual.to_h
             end
-          else
-            expected === actual
           end
         end
       end
