@@ -1,3 +1,6 @@
+###  v0.3.1  (2023-03-27)
+- bugfix
+
 ###  v0.3.0  (2023-03-25)
 - match repeated field
 - match default values
