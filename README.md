@@ -12,8 +12,16 @@ require "rspec/protobuf"
 subject { MyProtoMessage.new(msg: "hi") }
 
 it { is_expected.to be_a_protobuf }
+
+# check type
+it { is_expected.to be_a_protobuf(MyProtoMessage) }
+
+# check field values
 it { is_expected.to be_a_protobuf(msg: "hi") }
 it { is_expected.to be_a_protobuf(msg: /^h/) }
+
+# composite matching
+it { expect(result).to include(data: a_protobuf(MyProtoMessage, msg: starting_with("h"))) }
 ```
 
 
