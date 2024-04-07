@@ -14,6 +14,8 @@ Gem::Specification.new do |s|
   s.license     = "MIT"
   s.files       = `git ls-files * ':!:spec'`.split("\n")
 
+  s.required_ruby_version = ">= 3"
+
   s.add_dependency "google-protobuf", ">= 3"
   s.add_dependency "rspec-expectations", ">= 3"
 
