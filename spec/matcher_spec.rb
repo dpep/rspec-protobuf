@@ -100,8 +100,8 @@ describe :be_a_protobuf do
         '-:uid => 1,',
         '+:uid => 123,',
 
-        '-:date => {:month=>1},',
-        '+:date => {:day=>3, :month=>1},',
+        EXPANDED_HASH_SYNTAX ? '-:date => {:month => 1},' : '-:date => {:month=>1},',
+        EXPANDED_HASH_SYNTAX ? '+:date => {:day => 3, :month => 1},' : '+:date => {:day=>3, :month=>1},',
       )
     end
   end
@@ -182,8 +182,8 @@ describe :be_a_protobuf do
       expect {
         is_expected.to be_a_protobuf(msg: { msg: :h })
       }.to fail_including(
-        '-:msg => {:msg=>:h},',
-        '+:msg => {:msg=>"hello"},',
+        EXPANDED_HASH_SYNTAX ? '-:msg => {:msg => :h},' : '-:msg => {:msg=>:h},',
+        EXPANDED_HASH_SYNTAX ? '+:msg => {:msg => "hello"},' : '+:msg => {:msg=>"hello"},',
       )
     end
   end
