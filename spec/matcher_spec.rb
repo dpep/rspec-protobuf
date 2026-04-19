@@ -100,8 +100,9 @@ describe :be_a_protobuf do
         '-:uid => 1,',
         '+:uid => 123,',
 
-        LABEL_HASH_SYNTAX ? "-:date => {month: 1}," : '-:date => {:month => 1},',
-        LABEL_HASH_SYNTAX ? "+:date => {day: 3, month: 1}," : '+:date => {:day => 3, :month => 1},',
+        # Ruby 3.4+ renders symbol-keyed hashes as {key: value}; simplify once Ruby 3.3 support is dropped.
+        Regexp.union("-:date => {:month=>1},", "-:date => {month: 1},"),
+        Regexp.union("+:date => {:day=>3, :month=>1},", "+:date => {day: 3, month: 1},"),
       )
     end
   end
@@ -182,8 +183,9 @@ describe :be_a_protobuf do
       expect {
         is_expected.to be_a_protobuf(msg: { msg: :h })
       }.to fail_including(
-        LABEL_HASH_SYNTAX ? "-:msg => {msg: :h}," : '-:msg => {:msg => :h},',
-        LABEL_HASH_SYNTAX ? '+:msg => {msg: "hello"},' : '+:msg => {:msg => "hello"},',
+        # Ruby 3.4+ renders symbol-keyed hashes as {key: value}; simplify once Ruby 3.3 support is dropped.
+        Regexp.union("-:msg => {:msg=>:h},", "-:msg => {msg: :h},"),
+        Regexp.union('+:msg => {:msg=>"hello"},', '+:msg => {msg: "hello"},'),
       )
     end
   end
