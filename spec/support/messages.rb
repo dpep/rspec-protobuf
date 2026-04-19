@@ -1,36 +1,59 @@
+require "google/protobuf/descriptor_pb"
+
 pool = Google::Protobuf::DescriptorPool.new
 
-pool.build do
-  add_message "MyMessage" do
-    optional :msg, :string, 1
-  end
+file = Google::Protobuf::FileDescriptorProto.new(
+  name: "spec_messages.proto",
+  syntax: "proto2",
+  enum_type: [
+    Google::Protobuf::EnumDescriptorProto.new(
+      name: "DateType",
+      value: [
+        Google::Protobuf::EnumValueDescriptorProto.new(name: "DATE_DEFAULT", number: 0),
+        Google::Protobuf::EnumValueDescriptorProto.new(name: "DATE_BDAY", number: 1),
+      ],
+    ),
+  ],
+  message_type: [
+    Google::Protobuf::DescriptorProto.new(
+      name: "MyMessage",
+      field: [
+        Google::Protobuf::FieldDescriptorProto.new(
+          name: "msg",
+          number: 1,
+          label: :LABEL_OPTIONAL,
+          type: :TYPE_STRING,
+        ),
+      ],
+    ),
+    Google::Protobuf::DescriptorProto.new(
+      name: "DateMessage",
+      field: [
+        Google::Protobuf::FieldDescriptorProto.new(name: "type", number: 1, label: :LABEL_OPTIONAL, type: :TYPE_ENUM, type_name: "DateType"),
+        Google::Protobuf::FieldDescriptorProto.new(name: "month", number: 2, label: :LABEL_OPTIONAL, type: :TYPE_INT32),
+        Google::Protobuf::FieldDescriptorProto.new(name: "day", number: 3, label: :LABEL_OPTIONAL, type: :TYPE_INT32),
+        Google::Protobuf::FieldDescriptorProto.new(name: "year", number: 4, label: :LABEL_OPTIONAL, type: :TYPE_INT32),
+      ],
+    ),
+    Google::Protobuf::DescriptorProto.new(
+      name: "ComplexMessage",
+      oneof_decl: [
+        Google::Protobuf::OneofDescriptorProto.new(name: "id"),
+      ],
+      field: [
+        Google::Protobuf::FieldDescriptorProto.new(name: "msg", number: 1, label: :LABEL_OPTIONAL, type: :TYPE_MESSAGE, type_name: "MyMessage"),
+        Google::Protobuf::FieldDescriptorProto.new(name: "complex", number: 2, label: :LABEL_OPTIONAL, type: :TYPE_BOOL),
+        Google::Protobuf::FieldDescriptorProto.new(name: "date", number: 3, label: :LABEL_OPTIONAL, type: :TYPE_MESSAGE, type_name: "DateMessage"),
+        Google::Protobuf::FieldDescriptorProto.new(name: "uid", number: 4, label: :LABEL_OPTIONAL, type: :TYPE_INT32, oneof_index: 0),
+        Google::Protobuf::FieldDescriptorProto.new(name: "uuid", number: 5, label: :LABEL_OPTIONAL, type: :TYPE_STRING, oneof_index: 0),
+        Google::Protobuf::FieldDescriptorProto.new(name: "numbers", number: 6, label: :LABEL_REPEATED, type: :TYPE_INT32),
+        Google::Protobuf::FieldDescriptorProto.new(name: "messages", number: 7, label: :LABEL_REPEATED, type: :TYPE_MESSAGE, type_name: "MyMessage"),
+      ],
+    ),
+  ],
+)
 
-  add_enum "DateType" do
-    value :DATE_DEFAULT, 0
-    value :DATE_BDAY, 1
-  end
-
-  add_message "DateMessage" do
-    optional :type, :enum, 1, "DateType"
-    optional :month, :int32, 2
-    optional :day, :int32, 3
-    optional :year, :int32, 4
-  end
-
-  add_message "ComplexMessage" do
-    optional :msg, :message, 1, "MyMessage"
-    optional :complex, :bool, 2
-    optional :date, :message, 3, "DateMessage"
-
-    oneof :id do
-      optional :uid, :int32, 4
-      optional :uuid, :string, 5
-    end
-
-    repeated :numbers, :int32, 6
-    repeated :messages, :message, 7, "MyMessage"
-  end
-end
+pool.add_serialized_file(Google::Protobuf::FileDescriptorProto.encode(file))
 
 MyMessage = pool.lookup("MyMessage").msgclass
 DateType = pool.lookup("DateType").enummodule

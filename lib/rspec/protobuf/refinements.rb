@@ -88,9 +88,27 @@ module RSpec
               actual.matches?(**expected)
             else
               # eg. RSpec matchers
-              expected === actual.to_h
+              expected === protobuf_hash(actual)
             end
           end
+        end
+
+        def protobuf_hash(message)
+          Hash[
+            message.class.descriptor.map do |field|
+              value = field.get(message)
+              value =
+                if value.is_a?(Google::Protobuf::MessageExts)
+                  protobuf_hash(value)
+                elsif field.label == :repeated && field.type == :message
+                  value.map { |v| protobuf_hash(v) }
+                else
+                  value
+                end
+
+              [ field.name.to_sym, value ]
+            end
+          ]
         end
       end
     end
