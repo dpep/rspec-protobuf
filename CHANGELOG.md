@@ -1,3 +1,6 @@
+###  0.4.0  (2026-04-19)
+- ruby version / gem upgrades
+
 ###  v0.3.1  (2023-03-27)
 - bugfix
 
