@@ -1,0 +1,31 @@
+syntax = "proto2";
+
+enum DateType {
+  DATE_DEFAULT = 0;
+  DATE_BDAY = 1;
+}
+
+message MyMessage {
+  optional string msg = 1;
+}
+
+message DateMessage {
+  optional DateType type = 1;
+  optional int32 month = 2;
+  optional int32 day = 3;
+  optional int32 year = 4;
+}
+
+message ComplexMessage {
+  optional MyMessage msg = 1;
+  optional bool complex = 2;
+  optional DateMessage date = 3;
+
+  oneof id {
+    int32 uid = 4;
+    string uuid = 5;
+  }
+
+  repeated int32 numbers = 6;
+  repeated MyMessage messages = 7;
+}
