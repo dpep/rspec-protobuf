@@ -154,6 +154,10 @@ describe RSpec::Protobuf::Refinements do
       expect(MyMessage.new(msg: "").normalized_hash).to eq({})
     end
 
+    it "optionally includes default values" do
+      expect(MyMessage.new.normalized_hash(include_defaults: true)).to eq(msg: "")
+    end
+
     it "returns non-default attributes" do
       expect(MyMessage.new(msg: "hi").normalized_hash).to eq(msg: "hi")
     end

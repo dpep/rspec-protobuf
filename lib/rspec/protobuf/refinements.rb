@@ -31,7 +31,7 @@ module RSpec
           end
         end
 
-        def normalized_hash
+        def normalized_hash(include_defaults: false)
           res = {}
 
           self.class.descriptor.each do |field|
@@ -39,11 +39,13 @@ module RSpec
 
             if value.is_a?(Google::Protobuf::MessageExts)
               # recursively serialize sub-message
-              value = value.normalized_hash
+              value = value.normalized_hash(include_defaults:)
+            elsif include_defaults && field.label == :repeated && field.type == :message
+              value = value.map { |v| v.normalized_hash(include_defaults:) }
             end
 
             default = field.label == :repeated ? [] : field.default
-            res[field.name.to_sym] = value unless default == value
+            res[field.name.to_sym] = value if include_defaults || default != value
           end
 
           res
@@ -88,27 +90,9 @@ module RSpec
               actual.matches?(**expected)
             else
               # eg. RSpec matchers
-              expected === protobuf_hash(actual)
+              expected === actual.normalized_hash(include_defaults: true)
             end
           end
-        end
-
-        def protobuf_hash(message)
-          Hash[
-            message.class.descriptor.map do |field|
-              value = field.get(message)
-              value =
-                if value.is_a?(Google::Protobuf::MessageExts)
-                  protobuf_hash(value)
-                elsif field.label == :repeated && field.type == :message
-                  value.map { |v| protobuf_hash(v) }
-                else
-                  value
-                end
-
-              [ field.name.to_sym, value ]
-            end
-          ]
         end
       end
     end
