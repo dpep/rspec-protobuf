@@ -206,6 +206,22 @@ describe RSpec::Protobuf::Refinements do
         expect(msg.normalized_hash).to eq(msg: {})
       end
 
+      it "normalizes repeated sub-messages when defaults are included" do
+        msg = ComplexMessage.new(
+          messages: [
+            MyMessage.new,
+            MyMessage.new(msg: "hi"),
+          ],
+        )
+
+        expect(msg.normalized_hash(include_defaults: true).fetch(:messages)).to eq(
+          [
+            { msg: "" },
+            { msg: "hi" },
+          ],
+        )
+      end
+
       it "symbolizes enums" do
         msg = ComplexMessage.new(
           date: DateMessage.new(type: :DATE_BDAY),
