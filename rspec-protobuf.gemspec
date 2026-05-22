@@ -1,16 +1,12 @@
-package_name = File.basename(__FILE__).split(".")[0]
-load Dir.glob("lib/**/version.rb")[0]
-
-package = RSpec::Protobuf
-
+require_relative "lib/rspec/protobuf/version"
 
 Gem::Specification.new do |s|
-  s.name        = package_name
-  s.version     = package.const_get "VERSION"
+  s.name        = "rspec-protobuf"
+  s.version     = RSpec::Protobuf::VERSION
   s.authors     = ["Daniel Pepper"]
-  s.summary     = package.to_s
+  s.summary     = "RSpec::Protobuf"
   s.description = "RSpec matchers for Protobuf"
-  s.homepage    = "https://github.com/dpep/#{package_name}"
+  s.homepage    = "https://github.com/dpep/rspec-protobuf"
   s.license     = "MIT"
   s.files       = `git ls-files * ':!:spec'`.split("\n")
 
