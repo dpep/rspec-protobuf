@@ -47,6 +47,16 @@ describe :be_a_protobuf do
         '+:msg => "Hello",'
       )
     end
+
+    it "produces a negation message naming the matched attributes" do
+      expect {
+        is_expected.not_to be_a_protobuf(msg: "Hello")
+      }.to fail_including(
+        "not to be a Protobuf with ",
+        # Ruby 3.4+ renders symbol-keyed hashes as {key: value}; simplify once Ruby 3.3 support is dropped.
+        Regexp.union('{:msg=>"Hello"}', '{msg: "Hello"}'),
+      )
+    end
   end
 
   context "when input is erroneous" do
