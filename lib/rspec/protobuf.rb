@@ -48,6 +48,12 @@ RSpec::Matchers.define :be_a_protobuf do |type = nil, **attrs|
 
   failure_message { @fail_msg }
 
+  failure_message_when_negated do |actual|
+    msg = "expected #{actual} not to be #{description}"
+    msg += " with #{attrs}" unless attrs.empty?
+    msg
+  end
+
   diffable
 end
 
