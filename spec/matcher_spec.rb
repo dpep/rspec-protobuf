@@ -52,8 +52,9 @@ describe :be_a_protobuf do
       expect {
         is_expected.not_to be_a_protobuf(msg: "Hello")
       }.to fail_including(
+        "not to be a Protobuf with ",
         # Ruby 3.4+ renders symbol-keyed hashes as {key: value}; simplify once Ruby 3.3 support is dropped.
-        Regexp.union('not to be a Protobuf with {:msg=>"Hello"}', 'not to be a Protobuf with {msg: "Hello"}'),
+        Regexp.union('{:msg=>"Hello"}', '{msg: "Hello"}'),
       )
     end
   end
