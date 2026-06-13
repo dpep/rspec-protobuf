@@ -1,6 +1,6 @@
 require "debug"
 require "rspec"
-require 'rspec/matchers/fail_matchers'
+require "rspec/matchers/fail_matchers"
 require "simplecov"
 
 SimpleCov.start do
