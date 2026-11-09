@@ -1,6 +1,25 @@
 module RSpec
   module Protobuf
     module Refinements
+      # Message#to_h, but keeping default-valued fields, which google-protobuf 4 drops
+      def self.to_h_with_defaults(value)
+        case value
+        when Google::Protobuf::MessageExts
+          value.class.descriptor.to_h do |field|
+            [ field.name.to_sym, to_h_with_defaults(field.get(value)) ]
+          end
+        when Google::Protobuf::RepeatedField
+          value.map { |x| to_h_with_defaults(x) }
+        when Google::Protobuf::Map
+          # Map#to_h ignores a block
+          res = {}
+          value.each { |k, v| res[k] = to_h_with_defaults(v) }
+          res
+        else
+          value
+        end
+      end
+
       refine Google::Protobuf::MessageExts do
         def include?(*args)
           expected_attrs = Hash === args.last ? args.pop : {}
@@ -31,21 +50,16 @@ module RSpec
           end
         end
 
-        def normalized_hash(include_defaults: false)
+        def normalized_hash
           res = {}
 
           self.class.descriptor.each do |field|
             value = field.get(self)
 
-            if value.is_a?(Google::Protobuf::MessageExts)
-              # recursively serialize sub-message
-              value = value.normalized_hash(include_defaults:)
-            elsif include_defaults && field.label == :repeated && field.type == :message
-              value = value.map { |v| v.normalized_hash(include_defaults:) }
-            end
+            # recursively serialize sub-message
+            value = value.normalized_hash if value.is_a?(Google::Protobuf::MessageExts)
 
-            default = field.label == :repeated ? [] : field.default
-            res[field.name.to_sym] = value if include_defaults || default != value
+            res[field.name.to_sym] = value unless default_value?(field, value)
           end
 
           res
@@ -56,10 +70,10 @@ module RSpec
         def field_matches?(field, expected)
           actual = field.get(self)
 
-          if expected.nil?
-            # mimic protobuf behavior and convert to default value
-            expected = field.label == :repeated ? [] : field.default
-          elsif expected.is_a?(Symbol) && field.type == :string
+          # mimic protobuf behavior, where nil means the default value
+          return default_value?(field, actual) if expected.nil?
+
+          if expected.is_a?(Symbol) && field.type == :string
             # convert symbols to strings
             expected = expected.to_s
           end
@@ -80,19 +94,23 @@ module RSpec
           end
         end
 
+        def default_value?(field, value)
+          field.label == :repeated ? value.length.zero? : value == field.default
+        end
+
         def values_match?(actual, expected)
-          expected === actual || if actual.is_a?(Google::Protobuf::MessageExts)
-            case expected
-            when Google::Protobuf::MessageExts
-              # expected === actual
-            when Hash
-              # recurse
-              actual.matches?(**expected)
-            else
-              # eg. RSpec matchers
-              expected === actual.normalized_hash(include_defaults: true)
-            end
+          return true if expected === actual
+
+          case actual
+          when Google::Protobuf::MessageExts
+            return actual.matches?(**expected) if expected.is_a?(Hash)
+          when Google::Protobuf::RepeatedField, Google::Protobuf::Map
+          else
+            return false
           end
+
+          # eg. RSpec matchers, which expect plain Ruby values
+          expected === Refinements.to_h_with_defaults(actual)
         end
       end
     end

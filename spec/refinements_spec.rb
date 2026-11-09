@@ -154,10 +154,6 @@ describe RSpec::Protobuf::Refinements do
       expect(MyMessage.new(msg: "").normalized_hash).to eq({})
     end
 
-    it "optionally includes default values" do
-      expect(MyMessage.new.normalized_hash(include_defaults: true)).to eq(msg: "")
-    end
-
     it "returns non-default attributes" do
       expect(MyMessage.new(msg: "hi").normalized_hash).to eq(msg: "hi")
     end
@@ -206,20 +202,8 @@ describe RSpec::Protobuf::Refinements do
         expect(msg.normalized_hash).to eq(msg: {})
       end
 
-      it "normalizes repeated sub-messages when defaults are included" do
-        msg = ComplexMessage.new(
-          messages: [
-            MyMessage.new,
-            MyMessage.new(msg: "hi"),
-          ],
-        )
-
-        expect(msg.normalized_hash(include_defaults: true).fetch(:messages)).to eq(
-          [
-            { msg: "" },
-            { msg: "hi" },
-          ],
-        )
+      it "discards empty maps" do
+        expect(ComplexMessage.new(message_map: {}).normalized_hash).to eq({})
       end
 
       it "symbolizes enums" do
@@ -229,6 +213,32 @@ describe RSpec::Protobuf::Refinements do
 
         expect(msg.normalized_hash).to eq(date: { type: :DATE_BDAY })
       end
+    end
+  end
+
+  describe ".to_h_with_defaults" do
+    subject { described_class.to_h_with_defaults(msg) }
+
+    let(:msg) do
+      ComplexMessage.new(
+        date: DateMessage.new,
+        numbers: [ 1 ],
+        messages: [ MyMessage.new ],
+        message_map: { "a" => MyMessage.new },
+      )
+    end
+
+    it "keeps default values" do
+      is_expected.to eq(
+        msg: nil,
+        complex: false,
+        date: { type: :DATE_DEFAULT, month: 0, day: 0, year: 0 },
+        uid: 0,
+        uuid: "",
+        numbers: [ 1 ],
+        messages: [ { msg: "" } ],
+        message_map: { "a" => { msg: "" } },
+      )
     end
   end
 end
