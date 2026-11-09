@@ -44,8 +44,7 @@ module RSpec
               value = value.map { |v| v.normalized_hash(include_defaults:) }
             end
 
-            default = field.label == :repeated ? [] : field.default
-            res[field.name.to_sym] = value if include_defaults || default != value
+            res[field.name.to_sym] = value if include_defaults || !default_value?(field, value)
           end
 
           res
@@ -56,10 +55,10 @@ module RSpec
         def field_matches?(field, expected)
           actual = field.get(self)
 
-          if expected.nil?
-            # mimic protobuf behavior and convert to default value
-            expected = field.label == :repeated ? [] : field.default
-          elsif expected.is_a?(Symbol) && field.type == :string
+          # mimic protobuf behavior, where nil means the default value
+          return default_value?(field, actual) if expected.nil?
+
+          if expected.is_a?(Symbol) && field.type == :string
             # convert symbols to strings
             expected = expected.to_s
           end
@@ -78,6 +77,10 @@ module RSpec
           else
             values_match?(actual, expected)
           end
+        end
+
+        def default_value?(field, value)
+          field.label == :repeated ? value.length.zero? : value == field.default
         end
 
         def values_match?(actual, expected)
