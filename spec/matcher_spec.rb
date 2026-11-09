@@ -167,6 +167,16 @@ describe :be_a_protobuf do
       )
     end
 
+    it "matches RSpec matchers against plain values" do
+      is_expected.to be_a_protobuf(messages: include(a_hash_including(msg: "b")))
+    end
+
+    it "matches RSpec matchers against default values" do
+      expect(ComplexMessage.new(messages: [ MyMessage.new ])).to be_a_protobuf(
+        messages: contain_exactly(a_hash_including(msg: "")),
+      )
+    end
+
     it "catches length mismatches" do
       is_expected.not_to be_a_protobuf(messages: messages[...2])
 
@@ -182,6 +192,18 @@ describe :be_a_protobuf do
         /\+:messages => \[<MyMessage: msg: "a">, .* "c">\],/,
       )
     end
+  end
+
+  context "with a map field" do
+    subject { ComplexMessage.new(message_map: { "a" => MyMessage.new }) }
+
+    it { is_expected.to be_a_protobuf(message_map: { "a" => { msg: "" } }) }
+    it { is_expected.to be_a_protobuf(message_map: include("a" => a_hash_including(msg: ""))) }
+    it { is_expected.not_to be_a_protobuf(message_map: {}) }
+    it { is_expected.not_to be_a_protobuf(message_map: nil) }
+
+    it { expect(ComplexMessage.new).to be_a_protobuf(message_map: {}) }
+    it { expect(ComplexMessage.new).to be_a_protobuf(message_map: nil) }
   end
 
   context "when expecting a symbol" do

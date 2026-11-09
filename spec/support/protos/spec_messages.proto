@@ -1,3 +1,6 @@
+// Regenerate spec_messages_pb.rb after editing (protoc 36.2):
+//   protoc --ruby_out=. spec_messages.proto
+
 syntax = "proto2";
 
 enum DateType {
@@ -28,4 +31,5 @@ message ComplexMessage {
 
   repeated int32 numbers = 6;
   repeated MyMessage messages = 7;
+  map<string, MyMessage> message_map = 8;
 }
