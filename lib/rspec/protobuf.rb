@@ -12,7 +12,7 @@ RSpec::Matchers.define :be_a_protobuf do |type = nil, **attrs|
       raise TypeError, "Expected arg to be a Google::Protobuf::MessageExts, found: #{type}"
     end
 
-    @fail_msg = "#{actual} is not a Protobuf"
+    @fail_msg = "#{actual.inspect} is not a Protobuf"
     return false unless actual.is_a?(Google::Protobuf::MessageExts)
 
     # match expected message type
@@ -30,12 +30,22 @@ RSpec::Matchers.define :be_a_protobuf do |type = nil, **attrs|
       end
     end
 
+    return true if actual.include?(attrs)
+
+    # let the diff explain: only referenced attrs, defaults removed
     @fail_msg = ""
-
-    # customize differ output by removing unreferenced and default attrs
+    @diff_expected = attrs
     @actual = actual.normalized_hash.slice(*attrs.keys)
+    false
+  end
 
-    actual.include?(attrs)
+  # only an attribute mismatch has a useful diff
+  def diffable?
+    !@diff_expected.nil?
+  end
+
+  def expected
+    @diff_expected || super
   end
 
   description do
@@ -49,8 +59,6 @@ RSpec::Matchers.define :be_a_protobuf do |type = nil, **attrs|
     msg += " with #{attrs}" unless attrs.empty?
     msg
   end
-
-  diffable
 end
 
 RSpec::Matchers.alias_matcher :a_protobuf, :be_a_protobuf

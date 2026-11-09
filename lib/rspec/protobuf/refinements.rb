@@ -25,24 +25,18 @@ module RSpec
           expected_attrs = Hash === args.last ? args.pop : {}
 
           # ensure all enumerated keys are indeed attributes
-          return false unless args.all? { |attr| respond_to?(attr) }
-
-          # ensure all enumerated attributes are present
-          return false unless expected_attrs.keys.all? { |attr| respond_to?(attr) }
-
-          fields = Hash[
-            self.class.descriptor.map { |f| [ f.name.to_sym, f ] }
-          ]
+          return false unless args.all? { |attr| field_for(attr) }
 
           # ensure that expected attribute matches
-          expected_attrs.all? do |expected_attr, expected_value|
-            field_matches?(fields[expected_attr], expected_value)
+          expected_attrs.all? do |attr, expected|
+            field = field_for(attr)
+            field && field_matches?(field, expected)
           end
         end
 
         def matches?(**attrs)
           # ensure all enumerated attributes are present
-          return false unless attrs.keys.all? { |attr| respond_to?(attr) }
+          return false unless attrs.keys.all? { |attr| field_for(attr) }
 
           # ensure that each field matches
           self.class.descriptor.all? do |field|
@@ -66,6 +60,11 @@ module RSpec
         end
 
         private
+
+        # nil unless attr is a Symbol naming a field, not eg. a oneof or method
+        def field_for(attr)
+          self.class.descriptor.lookup(attr.to_s) if attr.is_a?(Symbol)
+        end
 
         def field_matches?(field, expected)
           actual = field.get(self)

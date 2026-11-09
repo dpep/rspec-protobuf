@@ -27,6 +27,13 @@ describe RSpec::Protobuf::Refinements do
       is_expected.not_to include_attrs(:foo)
     end
 
+    it "does not include methods that are not fields" do
+      is_expected.not_to include_attrs(:id)
+      is_expected.not_to include_attrs(id: :uid)
+      is_expected.not_to include_attrs(to_h: anything)
+      is_expected.not_to include_attrs("uid" => 123)
+    end
+
     it { is_expected.to include_attrs(msg: nil) }
     it { is_expected.to include_attrs(uid: 123) }
     it { is_expected.to include_attrs(uid: Integer) }
@@ -131,6 +138,10 @@ describe RSpec::Protobuf::Refinements do
       it "matches a symbol" do
         is_expected.to match_attrs(msg: { msg: :Hello })
       end
+    end
+
+    it "does not match methods that are not fields" do
+      expect(MyMessage.new(msg: "hi")).not_to match_attrs(msg: "hi", to_h: anything)
     end
 
     it "does not match bogus attributes" do
