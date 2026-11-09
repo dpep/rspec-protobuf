@@ -1,4 +1,4 @@
-## Unreleased
+###  0.4.1  (2026-11-08)
 - Fix map fields: naming one in `be_a_protobuf` raised `TypeError`, and a hash never matched one.
 - RSpec matchers on repeated and map fields see plain Ruby values with defaults kept, e.g. `be_a_protobuf(messages: include(a_hash_including(msg: "")))`, the same on google-protobuf 3 and 4.
 - Clearer failure output: given a type, the diff shows only the attributes (it showed `[Type, {...}]`); a type mismatch no longer diffs; the negation message names the message rather than a hash; `expect(nil).to be_a_protobuf` says `nil is not a Protobuf`.
