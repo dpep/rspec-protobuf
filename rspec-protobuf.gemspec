@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.description = "RSpec matchers for Protobuf"
   s.homepage    = "https://github.com/dpep/rspec-protobuf"
   s.license     = "MIT"
-  s.files       = `git ls-files * ':!:spec'`.split("\n")
+  s.files       = `git ls-files * ':!:spec' ':!:gemfiles'`.split("\n")
 
   s.required_ruby_version = ">= 3.3"
 
