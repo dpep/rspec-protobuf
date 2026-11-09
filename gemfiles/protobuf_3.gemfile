@@ -1,0 +1,8 @@
+source "https://rubygems.org"
+
+gemspec path: ".."
+
+gem "google-protobuf", "~> 3.25"
+
+# google-protobuf 3.x builds its native extension with rake but doesn't depend on it
+gem "rake"
