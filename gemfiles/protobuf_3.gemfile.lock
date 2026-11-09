@@ -62,7 +62,7 @@ DEPENDENCIES
   rake
   rspec (>= 3)
   rspec-protobuf!
-  simplecov
+  simplecov (>= 1)
 
 CHECKSUMS
   bundler (4.0.19) sha256=b48056e4c77fb3853cc47775b5447ede44aaa4f53c32f168014ab4fe86587d47
