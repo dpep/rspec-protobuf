@@ -35,6 +35,7 @@ describe :be_a_protobuf do
     it { is_expected.not_to be_a_protobuf(msg: /f/) }
     it { is_expected.not_to be_a_protobuf(msg: nil) }
     it { is_expected.not_to be_a_protobuf(invalid: true) }
+    it { is_expected.not_to be_a_protobuf(to_h: anything) }
     it { is_expected.not_to be_a_protobuf(DateMessage) }
     it { expect(Object).not_to be_a_protobuf }
     it { expect(123).not_to be_a_protobuf }
