@@ -49,6 +49,33 @@ describe :be_a_protobuf do
       )
     end
 
+    it "produces a failure diff when given a type" do
+      expect {
+        is_expected.to be_a_protobuf(MyMessage, msg: "H")
+      }.to fail_including(
+        '-:msg => "H",',
+        '+:msg => "Hello",'
+      )
+    end
+
+    it "explains a type mismatch without a diff" do
+      expect {
+        is_expected.to be_a_protobuf(DateMessage)
+      }.to fail_with("Expected a Protobuf message of type DateMessage, found MyMessage")
+    end
+
+    it "explains a non-protobuf" do
+      expect {
+        expect(nil).to be_a_protobuf
+      }.to fail_with("nil is not a Protobuf")
+    end
+
+    it "produces a negation message naming the message" do
+      expect {
+        is_expected.not_to be_a_protobuf(msg: "Hello")
+      }.to fail_including('expected <MyMessage: msg: "Hello"> not to be')
+    end
+
     it "produces a negation message naming the matched attributes" do
       expect {
         is_expected.not_to be_a_protobuf(msg: "Hello")
